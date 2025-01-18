@@ -1,0 +1,118 @@
+import * as hmUI from "@zos/ui";
+import { px } from "@zos/utils";
+
+import {
+  DEFAULT_COLOR,
+  DEFAULT_COLOR_TRANSPARENT,
+} from "../utils/config/constants";
+import { DEVICE_WIDTH } from "../utils/config/device";
+
+export const FETCH_BUTTON = {
+  x: (DEVICE_WIDTH - px(150)) / 2,
+  y: px(410),
+  w: px(150),
+  h: px(50),
+  text_size: px(20),
+  radius: px(25),
+  normal_color: DEFAULT_COLOR,
+  press_color: DEFAULT_COLOR_TRANSPARENT,
+  text: "Refresh",
+};
+
+export const FETCH_RESULT_TEXT = {
+  x: px(56),
+  y: px(74),
+  w: DEVICE_WIDTH - 2 * px(56),
+  h: px(200),
+  color: 0xffffff,
+  text_size: px(36),
+  align_h: hmUI.align.CENTER_H,
+  align_v: hmUI.align.CENTER_V,
+  text_style: hmUI.text_style.WRAP,
+};
+
+export const APP_HEADER_TEXT = {
+  x: px(56),
+  y: px(30),
+  w: DEVICE_WIDTH - 2 * px(56),
+  h: px(200),
+  color: 0xffffff,
+  text_size: px(20),
+  align_h: hmUI.align.CENTER_H,
+  align_v: hmUI.align.TOP,
+  text_style: hmUI.text_style.WRAP,
+};
+
+export const FAJR_TEXT = {
+  x: px(-150),
+  y: px(110),
+  w: DEVICE_WIDTH - 2 * px(56),
+  h: px(200),
+  color: 0xffffff,
+  text_size: px(30),
+  align_h: hmUI.align.RIGHT,
+  align_v: hmUI.align.TOP,
+  text_style: hmUI.text_style.WRAP,
+};
+
+export const SUNRISE_TEXT = {
+  x: px(260),
+  y: px(110),
+  w: DEVICE_WIDTH - 2 * px(56),
+  h: px(200),
+  color: 0xffffff,
+  text_size: px(30),
+  align_h: hmUI.align.LEFT,
+  align_v: hmUI.align.TOP,
+  text_style: hmUI.text_style.WRAP,
+};
+
+export const DHUHR_TEXT = {
+  x: px(-150),
+  y: px(210),
+  w: DEVICE_WIDTH - 2 * px(56),
+  h: px(200),
+  color: 0xffffff,
+  text_size: px(30),
+  align_h: hmUI.align.RIGHT,
+  align_v: hmUI.align.TOP,
+  text_style: hmUI.text_style.WRAP,
+};
+
+export const ASR_TEXT = {
+  x: px(260),
+  y: px(210),
+  w: DEVICE_WIDTH - 2 * px(56),
+  h: px(200),
+  color: 0xffffff,
+  text_size: px(30),
+  align_h: hmUI.align.LEFT,
+  align_v: hmUI.align.TOP,
+  text_style: hmUI.text_style.WRAP,
+};
+
+
+export const MAGHRIB_TEXT = {
+  x: px(-150),
+  y: px(310),
+  w: DEVICE_WIDTH - 2 * px(56),
+  h: px(200),
+  color: 0xffffff,
+  text_size: px(30),
+  align_h: hmUI.align.RIGHT,
+  align_v: hmUI.align.TOP,
+  text_style: hmUI.text_style.WRAP,
+};
+
+
+export const ISHA_TEXT = {
+  x: px(260),
+  y: px(310),
+  w: DEVICE_WIDTH - 2 * px(56),
+  h: px(200),
+  color: 0xffffff,
+  text_size: px(30),
+  align_h: hmUI.align.LEFT,
+  align_v: hmUI.align.TOP,
+  text_style: hmUI.text_style.WRAP,
+};
