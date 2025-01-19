@@ -44,7 +44,7 @@ Page(
       hmUI.deleteWidget(ishaWidget);
       centerMessageWidget = hmUI.createWidget(hmUI.widget.TEXT, {
         ...CENTER_MESSAGE_TEXT,
-        text: "Loading prayer times...",
+        text: "Loading...",
       });
       this.request({
         method: "GET_DATA",
