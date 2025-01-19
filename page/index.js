@@ -50,8 +50,8 @@ Page(
         text: "Loading...",
       });
     },
-    renderPrayerTimeItem(widget, ptStyle, nextStyle, result) {
-      widget = hmUI.createWidget(hmUI.widget.TEXT, {
+    renderPrayerTimeItem(ptStyle, nextStyle, result) {
+      return hmUI.createWidget(hmUI.widget.TEXT, {
         ...PRAYER_TIMES_GENERIC_TEXT,
         ...ptStyle,
         ...nextStyle ? ACTIVE_TEXT : {},
@@ -83,12 +83,12 @@ Page(
             const isAsrNext = !isFajrNext && !isDhuhrNext && result[3].isUpcoming;
             const isMaghribNext = !isFajrNext && !isDhuhrNext && !isAsrNext && result[4].isUpcoming;
             const isIshaNext = !isFajrNext && !isDhuhrNext && !isAsrNext && !isMaghribNext && result[5].isUpcoming;
-            this.renderPrayerTimeItem(fajrWidget, FAJR_TEXT, isFajrNext, result[0]);
-            this.renderPrayerTimeItem(sunriseWidget, SUNRISE_TEXT, {}, result[1]);
-            this.renderPrayerTimeItem(dhuhrWidget, DHUHR_TEXT, isDhuhrNext, result[2]);
-            this.renderPrayerTimeItem(asrWidget, ASR_TEXT, isAsrNext, result[3]);
-            this.renderPrayerTimeItem(maghribWidget, MAGHRIB_TEXT, isMaghribNext, result[4]);
-            this.renderPrayerTimeItem(ishaWidget, ISHA_TEXT, isIshaNext, result[5]);
+            fajrWidget = this.renderPrayerTimeItem(FAJR_TEXT, isFajrNext, result[0]);
+            sunriseWidget = this.renderPrayerTimeItem(SUNRISE_TEXT, {}, result[1]);
+            dhuhrWidget = this.renderPrayerTimeItem(DHUHR_TEXT, isDhuhrNext, result[2]);
+            asrWidget = this.renderPrayerTimeItem(ASR_TEXT, isAsrNext, result[3]);
+            maghribWidget = this.renderPrayerTimeItem(MAGHRIB_TEXT, isMaghribNext, result[4]);
+            ishaWidget = this.renderPrayerTimeItem(ISHA_TEXT, isIshaNext, result[5]);
           }
         })
         .catch((res) => { });
