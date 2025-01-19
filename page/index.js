@@ -13,6 +13,7 @@ import {
   ACTIVE_TEXT,
   CENTER_MESSAGE_TEXT,
   PRAYER_TIMES_GENERIC_TEXT,
+  ERROR_TEXT
 } from "zosLoader:./index.[pf].layout.js";
 
 const logger = Logger.getLogger("fetch_api");
@@ -63,7 +64,7 @@ Page(
           if (!result.length) {
             centerMessageWidget = hmUI.createWidget(hmUI.widget.TEXT, {
               ...CENTER_MESSAGE_TEXT,
-              ...ERROR_COLOR,
+              ...ERROR_TEXT,
               text: "Something went wrong!",
             });
           } else {

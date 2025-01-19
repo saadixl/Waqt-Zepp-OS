@@ -4,6 +4,8 @@ import { px } from "@zos/utils";
 import {
   ACTIVE_COLOR,
   DEFAULT_COLOR,
+  CENTER_MESSAGE_COLOR,
+  ERROR_COLOR,
 } from "../utils/config/constants";
 import { DEVICE_WIDTH } from "../utils/config/device";
 
@@ -12,15 +14,15 @@ export const CENTER_MESSAGE_TEXT = {
   y: px(140),
   w: px(250),
   h: px(200),
-  color: 0x0DBD2D,
+  color: CENTER_MESSAGE_COLOR,
   text_size: px(25),
   align_h: hmUI.align.CENTER_H,
   align_v: hmUI.align.CENTER_V,
   text_style: hmUI.text_style.WRAP,
 };
 
-export const ERROR_COLOR = {
-  color: 0xFF5733,
+export const ERROR_TEXT = {
+  color: ERROR_COLOR,
 };
 
 export const PRAYER_TIMES_GENERIC_TEXT = {
