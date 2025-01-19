@@ -1,5 +1,5 @@
 import * as hmUI from "@zos/ui";
-import { onKey, KEY_SELECT, KEY_EVENT_CLICK } from '@zos/interaction';
+import { onKey, KEY_UP, KEY_DOWN, KEY_EVENT_CLICK } from '@zos/interaction';
 import moment from "moment";
 import { log as Logger } from "@zos/utils";
 import { BasePage } from "@zeppos/zml/base-page";
@@ -23,10 +23,11 @@ Page(
     build() {
       onKey({
         callback: (key, keyEvent) => {
-          if (key === KEY_SELECT && keyEvent === KEY_EVENT_CLICK) {
+          if ((key === KEY_UP || key === KEY_DOWN) && keyEvent === KEY_EVENT_CLICK) {
             this.fetchData();
+          } else {
+            zepos.defaultOnKey(key, context);
           }
-          return true
         },
       });
 
