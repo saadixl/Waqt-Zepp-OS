@@ -1,5 +1,5 @@
 import * as hmUI from "@zos/ui";
-import { onKey, KEY_UP, KEY_DOWN, KEY_EVENT_CLICK } from '@zos/interaction';
+import { onKey, KEY_UP, KEY_DOWN, KEY_SELECT, KEY_EVENT_CLICK } from '@zos/interaction';
 import moment from "moment";
 import { log as Logger } from "@zos/utils";
 import { BasePage } from "@zeppos/zml/base-page";
@@ -25,8 +25,14 @@ Page(
     build() {
       onKey({
         callback: (key, keyEvent) => {
-          if ((key === KEY_UP || key === KEY_DOWN) && keyEvent === KEY_EVENT_CLICK) {
-            this.fetchData();
+          if (keyEvent === KEY_EVENT_CLICK) {
+            if (key === KEY_SELECT) {
+              this.fetchData('');
+            } else if (key === KEY_UP) {
+              this.fetchData('UP');
+            } else if (key === KEY_DOWN) {
+              this.fetchData('DOWN');
+            }
           } else {
             zepos.defaultOnKey(key, context);
           }
@@ -34,7 +40,7 @@ Page(
       });
 
       setTimeout(() => {
-        this.fetchData();
+        this.fetchData('');
       }, 10);
     },
     showLoading() {
@@ -58,19 +64,22 @@ Page(
         text: `${result.title}\n${result.time}`,
       });
     },
-    fetchData() {
+    fetchData(action) {
       this.showLoading();
       this.request({
         method: "GET_DATA",
+        params: {
+          action
+        }
       })
         .then((data) => {
           logger.log("receive data");
           hmUI.deleteWidget(centerMessageWidget);
+          const { result = [], city } = data;
           centerMessageWidget = hmUI.createWidget(hmUI.widget.TEXT, {
             ...CENTER_MESSAGE_TEXT,
-            text: `${moment().format('ddd MMM DD YYYY')}\nSingapore`,
+            text: `${moment().format('ddd MMM DD YYYY')}\n${city}`,
           });
-          const { result = [] } = data;
           if (!result.length) {
             centerMessageWidget = hmUI.createWidget(hmUI.widget.TEXT, {
               ...CENTER_MESSAGE_TEXT,

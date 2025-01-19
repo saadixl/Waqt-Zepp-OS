@@ -1,5 +1,14 @@
 import { BaseSideService } from "@zeppos/zml/base-side";
 import moment from "moment";
+let currentLocationIndex = 0;
+
+const supportedLocations = [
+  { city: 'Singapore', country: 'Singapore'},
+  { city: 'Dhaka', country: 'Bangladesh'},
+  { city: 'Makkah', country: 'SaudiArabia'},
+  { city: 'London', country: 'UK'},
+  { city: 'NY', country: 'USA'},
+];
 
 function isTimeAfterNow(givenTime) {
   const now = new Date();
@@ -23,10 +32,25 @@ function formatTime(title, time) {
   };
 }
 
-async function fetchPrayerTimes(res) {
+async function fetchPrayerTimes(res, action) {
   try {
+    if (action === 'UP') {
+      if (currentLocationIndex === 0) {
+        currentLocationIndex = supportedLocations.length - 1;
+      } else {
+        currentLocationIndex--;
+      }
+    }
+    if (action === 'DOWN') {
+      if (currentLocationIndex === supportedLocations.length - 1) {
+        currentLocationIndex = 0;
+      } else {
+        currentLocationIndex++;
+      }
+    }
+    const location = supportedLocations[currentLocationIndex];
     const response = await fetch({
-      url: 'https://api.aladhan.com/v1/timingsByCity?city=Singapore&country=Singapore',
+      url: `https://api.aladhan.com/v1/timingsByCity?city=${location.city}&country=${location.country}`,
       method: 'GET'
     })
     const resBody = typeof response.body === 'string' ? JSON.parse(response.body) : response.body
@@ -43,6 +67,7 @@ async function fetchPrayerTimes(res) {
     }
     res(null, {
       result,
+      city: location.city,
     });
   } catch (error) {
     res(null, {
@@ -58,7 +83,7 @@ AppSideService(
     onRequest(req, res) {
       console.log("=====>,", req.method);
       if (req.method === "GET_DATA") {
-        fetchPrayerTimes(res);
+        fetchPrayerTimes(res, req.params["action"]);
       }
     },
 
