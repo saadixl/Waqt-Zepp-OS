@@ -1,4 +1,7 @@
 # It's a work in progress
-<img height="320" alt="ss" src="https://github.com/user-attachments/assets/c440654a-519f-427a-909f-5a4643be670a" />
 
-<img height="320" alt="rr" src="https://github.com/user-attachments/assets/1db36353-642e-409d-a2c5-a27bd5f3b039" />
+## Features
+- Show prayer time for Singapore (For now)
+- Click on Up/Down button to refresh the prayer times
+
+![ss](https://github.com/user-attachments/assets/1ac65795-7389-4032-b318-118c3f73b5a6)
