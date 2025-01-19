@@ -1,9 +1,9 @@
 import * as hmUI from "@zos/ui";
+import moment from "moment";
 import { log as Logger } from "@zos/utils";
 import { BasePage } from "@zeppos/zml/base-page";
 import {
   FETCH_BUTTON,
-  FETCH_RESULT_TEXT,
   APP_HEADER_TEXT,
   FAJR_TEXT,
   SUNRISE_TEXT,
@@ -15,38 +15,13 @@ import {
 
 const logger = Logger.getLogger("fetch_api");
 
-let textWidget;
 Page(
   BasePage({
     state: {},
     build() {
       hmUI.createWidget(hmUI.widget.TEXT, {
         ...APP_HEADER_TEXT,
-        text: "Singapore\nSun Jan 19 2025",
-      });
-      hmUI.createWidget(hmUI.widget.TEXT, {
-        ...FAJR_TEXT,
-        text: "Fajr\n00:00 am",
-      });
-      hmUI.createWidget(hmUI.widget.TEXT, {
-        ...SUNRISE_TEXT,
-        text: "Sunrise\n00:00 am",
-      });
-      hmUI.createWidget(hmUI.widget.TEXT, {
-        ...DHUHR_TEXT,
-        text: "Dhuhr\n00:00 am",
-      });
-      hmUI.createWidget(hmUI.widget.TEXT, {
-        ...ASR_TEXT,
-        text: "Asr\n00:00 am",
-      });
-      hmUI.createWidget(hmUI.widget.TEXT, {
-        ...MAGHRIB_TEXT,
-        text: "Maghrib\n00:00 am",
-      });
-      hmUI.createWidget(hmUI.widget.TEXT, {
-        ...ISHA_TEXT,
-        text: "Isha\n00:00 am",
+        text: `Singapore\n${moment().format('ddd MMM DD YYYY')}`,
       });
       hmUI.createWidget(hmUI.widget.BUTTON, {
         ...FETCH_BUTTON,
@@ -62,19 +37,41 @@ Page(
       })
         .then((data) => {
           logger.log("receive data");
-          const { result = {} } = data;
-          const text = JSON.stringify(result);
-
-          if (!textWidget) {
-            textWidget = hmUI.createWidget(hmUI.widget.TEXT, {
-              ...FETCH_RESULT_TEXT,
-              text,
+          const { result = [] } = data;
+          //const text = JSON.stringify(result);
+          if (!result.length) {
+            hmUI.createWidget(hmUI.widget.TEXT, {
+              ...FAJR_TEXT,
+              text: "Please refresh to see prayer times.",
             });
           } else {
-            textWidget.setProperty(hmUI.prop.TEXT, text);
+            hmUI.createWidget(hmUI.widget.TEXT, {
+              ...FAJR_TEXT,
+              text: `${result[0].title}\n${result[0].time}`,
+            });
+            hmUI.createWidget(hmUI.widget.TEXT, {
+              ...SUNRISE_TEXT,
+              text: `${result[1].title}\n${result[1].time}`,
+            });
+            hmUI.createWidget(hmUI.widget.TEXT, {
+              ...DHUHR_TEXT,
+              text: `${result[2].title}\n${result[2].time}`,
+            });
+            hmUI.createWidget(hmUI.widget.TEXT, {
+              ...ASR_TEXT,
+              text: `${result[3].title}\n${result[3].time}`,
+            });
+            hmUI.createWidget(hmUI.widget.TEXT, {
+              ...MAGHRIB_TEXT,
+              text: `${result[4].title}\n${result[4].time}`,
+            });
+            hmUI.createWidget(hmUI.widget.TEXT, {
+              ...ISHA_TEXT,
+              text: `${result[5].title}\n${result[5].time}`,
+            });
           }
         })
-        .catch((res) => {});
+        .catch((res) => { });
     },
   })
 );

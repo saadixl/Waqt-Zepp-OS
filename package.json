@@ -12,6 +12,7 @@
     "@zeppos/device-types": "^3.0.0"
   },
   "dependencies": {
-    "@zeppos/zml": "^0.0.9"
+    "@zeppos/zml": "^0.0.9",
+    "moment": "^2.30.1"
   }
 }

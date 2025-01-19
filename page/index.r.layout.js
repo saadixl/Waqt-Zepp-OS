@@ -14,7 +14,7 @@ export const FETCH_BUTTON = {
   h: px(50),
   text_size: px(20),
   radius: px(25),
-  normal_color: DEFAULT_COLOR,
+  normal_color: 0x00bf63,
   press_color: DEFAULT_COLOR_TRANSPARENT,
   text: "Refresh",
 };
@@ -32,9 +32,9 @@ export const FETCH_RESULT_TEXT = {
 };
 
 export const APP_HEADER_TEXT = {
-  x: px(56),
+  x: (DEVICE_WIDTH - px(150)) / 2,
   y: px(30),
-  w: DEVICE_WIDTH - 2 * px(56),
+  w: px(150),
   h: px(200),
   color: 0xffffff,
   text_size: px(20),
@@ -84,7 +84,7 @@ export const ASR_TEXT = {
   y: px(210),
   w: DEVICE_WIDTH - 2 * px(56),
   h: px(200),
-  color: 0xffffff,
+  color: DEFAULT_COLOR,
   text_size: px(30),
   align_h: hmUI.align.LEFT,
   align_v: hmUI.align.TOP,

@@ -1,35 +1,33 @@
 import { BaseSideService } from "@zeppos/zml/base-side";
+import moment from "moment";
+
+function formatTime(title, time) {
+  return {
+    title,
+    time: moment(time, "h:mm a").format("h:mm a"),
+  };
+}
 
 async function fetchData(res) {
   try {
-    // Requesting network data using the fetch API
-    // The sample program is for simulation only and does not request real network data, so it is commented here
-    // Example of a GET method request
-    // const { body: { data = {} } = {} } = await fetch({
-    //   url: 'https://xxx.com/api/xxx',
-    //   method: 'GET'
-    // })
-    // Example of a POST method request
-    // const { body: { data = {} } = {} } = await fetch({
-    //   url: 'https://xxx.com/api/xxx',
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({
-    //     text: 'Hello Zepp OS'
-    //   })
-    // })
-
-    // A network request is simulated here, Reference documentation: https://jsonplaceholder.typicode.com/
     const response = await fetch({
-      url: 'https://jsonplaceholder.typicode.com/todos/1',
+      url: 'https://api.aladhan.com/v1/timingsByCity?city=Singapore&country=Singapore',
       method: 'GET'
     })
     const resBody = typeof response.body === 'string' ? JSON.parse(response.body) : response.body
-
+    const timings = resBody.status === 'OK' ? resBody.data.timings : null;
+    let result = [];
+    if (timings) {
+      const fajr = formatTime("Fajr", timings.Fajr);
+      const sunrise = formatTime("Sunrise", timings.Sunrise);
+      const dhuhr = formatTime("Dhuhr", timings.Dhuhr);
+      const asr = formatTime("Asr", timings.Asr);
+      const maghrib = formatTime("Maghrib", timings.Maghrib);
+      const isha = formatTime("Isha", timings.Isha);
+      result = [fajr, sunrise, dhuhr, asr, maghrib, isha];
+    }
     res(null, {
-      result: resBody,
+      result,
     });
   } catch (error) {
     res(null, {
@@ -49,8 +47,8 @@ AppSideService(
       }
     },
 
-    onRun() {},
+    onRun() { },
 
-    onDestroy() {},
+    onDestroy() { },
   })
 );
