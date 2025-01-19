@@ -51,9 +51,9 @@ Page(
           } else {
             const isFajrNext = result[0].isUpcoming;
             const isDhuhrNext = !isFajrNext && result[2].isUpcoming;
-            const isAsrNext = !isDhuhrNext && result[3].isUpcoming;
-            const isMaghribNext = !isAsrNext && result[4].isUpcoming;
-            const isIshaNext = !isMaghribNext && result[5].isUpcoming;
+            const isAsrNext = !isFajrNext && !isDhuhrNext && result[3].isUpcoming;
+            const isMaghribNext = !isFajrNext && !isDhuhrNext && !isAsrNext && result[4].isUpcoming;
+            const isIshaNext = !isFajrNext && !isDhuhrNext && !isAsrNext && !isMaghribNext && result[5].isUpcoming;
 
             hmUI.createWidget(hmUI.widget.TEXT, {
               ...FAJR_TEXT,
