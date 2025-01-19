@@ -23,7 +23,7 @@ function formatTime(title, time) {
   };
 }
 
-async function fetchData(res) {
+async function fetchPrayerTimes(res) {
   try {
     const response = await fetch({
       url: 'https://api.aladhan.com/v1/timingsByCity?city=Singapore&country=Singapore',
@@ -58,7 +58,7 @@ AppSideService(
     onRequest(req, res) {
       console.log("=====>,", req.method);
       if (req.method === "GET_DATA") {
-        fetchData(res);
+        fetchPrayerTimes(res);
       }
     },
 
