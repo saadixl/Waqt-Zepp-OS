@@ -12,6 +12,7 @@ import {
   ISHA_TEXT,
   ACTIVE_TEXT,
   CENTER_MESSAGE_TEXT,
+  PRAYER_TIMES_GENERIC_TEXT,
 } from "zosLoader:./index.[pf].layout.js";
 
 const logger = Logger.getLogger("fetch_api");
@@ -73,30 +74,36 @@ Page(
             const isIshaNext = !isFajrNext && !isDhuhrNext && !isAsrNext && !isMaghribNext && result[5].isUpcoming;
 
             fajrWidget = hmUI.createWidget(hmUI.widget.TEXT, {
+              ...PRAYER_TIMES_GENERIC_TEXT,
               ...FAJR_TEXT,
               ...isFajrNext ? ACTIVE_TEXT : {},
               text: `${result[0].title}\n${result[0].time}`,
             });
             sunriseWidget = hmUI.createWidget(hmUI.widget.TEXT, {
+              ...PRAYER_TIMES_GENERIC_TEXT,
               ...SUNRISE_TEXT,
               text: `${result[1].title}\n${result[1].time}`,
             });
             dhuhrWidget = hmUI.createWidget(hmUI.widget.TEXT, {
+              ...PRAYER_TIMES_GENERIC_TEXT,
               ...DHUHR_TEXT,
               ...isDhuhrNext ? ACTIVE_TEXT : {},
               text: `${result[2].title}\n${result[2].time}`,
             });
             asrWidget = hmUI.createWidget(hmUI.widget.TEXT, {
+              ...PRAYER_TIMES_GENERIC_TEXT,
               ...ASR_TEXT,
               ...isAsrNext ? ACTIVE_TEXT : {},
               text: `${result[3].title}\n${result[3].time}`,
             });
             maghribWidget = hmUI.createWidget(hmUI.widget.TEXT, {
+              ...PRAYER_TIMES_GENERIC_TEXT,
               ...MAGHRIB_TEXT,
               ...isMaghribNext ? ACTIVE_TEXT : {},
               text: `${result[4].title}\n${result[4].time}`,
             });
             ishaWidget = hmUI.createWidget(hmUI.widget.TEXT, {
+              ...PRAYER_TIMES_GENERIC_TEXT,
               ...ISHA_TEXT,
               ...isIshaNext ? ACTIVE_TEXT : {},
               text: `${result[5].title}\n${result[5].time}`,
