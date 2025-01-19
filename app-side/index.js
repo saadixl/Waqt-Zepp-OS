@@ -1,9 +1,24 @@
 import { BaseSideService } from "@zeppos/zml/base-side";
 import moment from "moment";
 
+function isTimeAfterNow(givenTime) {
+  const now = new Date();
+  const currentHours = now.getHours();
+  const currentMinutes = now.getMinutes();
+  const [givenHours, givenMinutes] = givenTime.split(":").map(Number);
+  if (givenHours > currentHours) {
+    return true;
+  } else if (givenHours === currentHours) {
+    return givenMinutes > currentMinutes;
+  } else {
+    return false;
+  }
+}
+
 function formatTime(title, time) {
   return {
     title,
+    isUpcoming: isTimeAfterNow(time),
     time: moment(time, "h:mm a").format("h:mm a"),
   };
 }

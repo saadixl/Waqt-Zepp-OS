@@ -2,6 +2,7 @@ import * as hmUI from "@zos/ui";
 import { px } from "@zos/utils";
 
 import {
+  ACTIVE_COLOR,
   DEFAULT_COLOR,
   DEFAULT_COLOR_TRANSPARENT,
 } from "../utils/config/constants";
@@ -19,24 +20,12 @@ export const FETCH_BUTTON = {
   text: "Refresh",
 };
 
-export const FETCH_RESULT_TEXT = {
-  x: px(56),
-  y: px(74),
-  w: DEVICE_WIDTH - 2 * px(56),
-  h: px(200),
-  color: 0xffffff,
-  text_size: px(36),
-  align_h: hmUI.align.CENTER_H,
-  align_v: hmUI.align.CENTER_V,
-  text_style: hmUI.text_style.WRAP,
-};
-
 export const APP_HEADER_TEXT = {
   x: (DEVICE_WIDTH - px(150)) / 2,
   y: px(30),
   w: px(150),
   h: px(200),
-  color: 0xffffff,
+  color: 0xdddddd,
   text_size: px(20),
   align_h: hmUI.align.CENTER_H,
   align_v: hmUI.align.TOP,
@@ -48,7 +37,7 @@ export const FAJR_TEXT = {
   y: px(110),
   w: DEVICE_WIDTH - 2 * px(56),
   h: px(200),
-  color: 0xffffff,
+  color: DEFAULT_COLOR,
   text_size: px(30),
   align_h: hmUI.align.RIGHT,
   align_v: hmUI.align.TOP,
@@ -60,7 +49,7 @@ export const SUNRISE_TEXT = {
   y: px(110),
   w: DEVICE_WIDTH - 2 * px(56),
   h: px(200),
-  color: 0xffffff,
+  color: DEFAULT_COLOR,
   text_size: px(30),
   align_h: hmUI.align.LEFT,
   align_v: hmUI.align.TOP,
@@ -72,7 +61,7 @@ export const DHUHR_TEXT = {
   y: px(210),
   w: DEVICE_WIDTH - 2 * px(56),
   h: px(200),
-  color: 0xffffff,
+  color: DEFAULT_COLOR,
   text_size: px(30),
   align_h: hmUI.align.RIGHT,
   align_v: hmUI.align.TOP,
@@ -97,7 +86,7 @@ export const MAGHRIB_TEXT = {
   y: px(310),
   w: DEVICE_WIDTH - 2 * px(56),
   h: px(200),
-  color: 0xffffff,
+  color: DEFAULT_COLOR,
   text_size: px(30),
   align_h: hmUI.align.RIGHT,
   align_v: hmUI.align.TOP,
@@ -110,9 +99,13 @@ export const ISHA_TEXT = {
   y: px(310),
   w: DEVICE_WIDTH - 2 * px(56),
   h: px(200),
-  color: 0xffffff,
+  color: DEFAULT_COLOR,
   text_size: px(30),
   align_h: hmUI.align.LEFT,
   align_v: hmUI.align.TOP,
   text_style: hmUI.text_style.WRAP,
+};
+
+export const ACTIVE_TEXT = {
+  color: ACTIVE_COLOR,
 };
