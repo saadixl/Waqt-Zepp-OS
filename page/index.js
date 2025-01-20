@@ -93,7 +93,7 @@ Page(
             const isMaghribNext = !isFajrNext && !isDhuhrNext && !isAsrNext && result[4].isUpcoming;
             const isIshaNext = !isFajrNext && !isDhuhrNext && !isAsrNext && !isMaghribNext && result[5].isUpcoming;
             fajrWidget = this.renderPrayerTimeItem(FAJR_TEXT, isFajrNext, result[0]);
-            sunriseWidget = this.renderPrayerTimeItem(SUNRISE_TEXT, {}, result[1]);
+            sunriseWidget = this.renderPrayerTimeItem(SUNRISE_TEXT, false, result[1]);
             dhuhrWidget = this.renderPrayerTimeItem(DHUHR_TEXT, isDhuhrNext, result[2]);
             asrWidget = this.renderPrayerTimeItem(ASR_TEXT, isAsrNext, result[3]);
             maghribWidget = this.renderPrayerTimeItem(MAGHRIB_TEXT, isMaghribNext, result[4]);
