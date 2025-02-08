@@ -6,3 +6,5 @@
 - Click on Select button to refresh the prayer times
 
 <img width="421" alt="ss" src="https://github.com/user-attachments/assets/82179601-34bc-4dbc-908a-df7b5bbc45f7" />
+
+### To run this project, please follow [official Zepp OS docs](https://docs.zepp.com/docs/guides/tools/cli/).
