@@ -1,6 +1,5 @@
 import * as hmUI from "@zos/ui";
 import { onKey, KEY_UP, KEY_DOWN, KEY_SELECT, KEY_EVENT_CLICK } from '@zos/interaction';
-import moment from "moment";
 import { log as Logger } from "@zos/utils";
 import { BasePage } from "@zeppos/zml/base-page";
 import {
@@ -18,6 +17,34 @@ import {
 
 const logger = Logger.getLogger("fetch_api");
 let centerMessageWidget, fajrWidget, sunriseWidget, dhuhrWidget, asrWidget, maghribWidget, ishaWidget;
+let currentRequest = null;
+
+function formatDate(date) {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const day = days[date.getDay()];
+  const month = months[date.getMonth()];
+  const dayNum = date.getDate();
+  const year = date.getFullYear();
+  return `${day} ${month} ${dayNum.toString().padStart(2, '0')} ${year}`;
+}
+
+function deleteAllWidgets() {
+  if (centerMessageWidget) hmUI.deleteWidget(centerMessageWidget);
+  if (fajrWidget) hmUI.deleteWidget(fajrWidget);
+  if (sunriseWidget) hmUI.deleteWidget(sunriseWidget);
+  if (dhuhrWidget) hmUI.deleteWidget(dhuhrWidget);
+  if (asrWidget) hmUI.deleteWidget(asrWidget);
+  if (maghribWidget) hmUI.deleteWidget(maghribWidget);
+  if (ishaWidget) hmUI.deleteWidget(ishaWidget);
+  centerMessageWidget = null;
+  fajrWidget = null;
+  sunriseWidget = null;
+  dhuhrWidget = null;
+  asrWidget = null;
+  maghribWidget = null;
+  ishaWidget = null;
+}
 
 Page(
   BasePage({
@@ -44,13 +71,7 @@ Page(
       }, 10);
     },
     showLoading() {
-      hmUI.deleteWidget(centerMessageWidget);
-      hmUI.deleteWidget(fajrWidget);
-      hmUI.deleteWidget(sunriseWidget);
-      hmUI.deleteWidget(dhuhrWidget);
-      hmUI.deleteWidget(asrWidget);
-      hmUI.deleteWidget(maghribWidget);
-      hmUI.deleteWidget(ishaWidget);
+      deleteAllWidgets();
       centerMessageWidget = hmUI.createWidget(hmUI.widget.TEXT, {
         ...CENTER_MESSAGE_TEXT,
         text: "Loading...",
@@ -65,22 +86,36 @@ Page(
       });
     },
     fetchData(action) {
+      // Cancel any pending request
+      if (currentRequest) {
+        // Note: BasePage request might not support cancellation, but we can track it
+        currentRequest = null;
+      }
+      
       this.showLoading();
-      this.request({
+      currentRequest = this.request({
         method: "GET_DATA",
         params: {
           action
         }
-      })
+      });
+      
+      currentRequest
         .then((data) => {
+          // Only process if this is still the current request
+          if (currentRequest === null) return;
+          
           logger.log("receive data");
-          hmUI.deleteWidget(centerMessageWidget);
+          // Delete all existing widgets before creating new ones
+          deleteAllWidgets();
+          
           const { result = [], city } = data;
           centerMessageWidget = hmUI.createWidget(hmUI.widget.TEXT, {
             ...CENTER_MESSAGE_TEXT,
-            text: `${moment().format('ddd MMM DD YYYY')}\n${city}`,
+            text: `${formatDate(new Date())}\n${city}`,
           });
           if (!result.length) {
+            if (centerMessageWidget) hmUI.deleteWidget(centerMessageWidget);
             centerMessageWidget = hmUI.createWidget(hmUI.widget.TEXT, {
               ...CENTER_MESSAGE_TEXT,
               ...ERROR_TEXT,
@@ -99,8 +134,18 @@ Page(
             maghribWidget = this.renderPrayerTimeItem(MAGHRIB_TEXT, isMaghribNext, result[4]);
             ishaWidget = this.renderPrayerTimeItem(ISHA_TEXT, isIshaNext, result[5]);
           }
+          currentRequest = null;
         })
-        .catch((res) => { });
+        .catch((err) => {
+          currentRequest = null;
+          logger.error("fetchData error:", err);
+        });
+    },
+    destroy() {
+      // Cancel any pending request
+      currentRequest = null;
+      // Clean up all widgets when page is destroyed
+      deleteAllWidgets();
     },
   })
 );

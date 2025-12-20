@@ -1,5 +1,4 @@
 import { BaseSideService } from "@zeppos/zml/base-side";
-import moment from "moment";
 let currentLocationIndex = 0;
 
 const supportedLocations = [
@@ -14,7 +13,11 @@ function isTimeAfterNow(givenTime) {
   const now = new Date();
   const currentHours = now.getHours();
   const currentMinutes = now.getMinutes();
-  const [givenHours, givenMinutes] = givenTime.split(":").map(Number);
+  
+  // Parse time string - could be "05:30 (EAT)" or "05:30" format
+  const timeOnly = givenTime.split(' ')[0]; // Get "05:30" part
+  const [givenHours, givenMinutes] = timeOnly.split(":").map(Number);
+  
   if (givenHours > currentHours) {
     return true;
   } else if (givenHours === currentHours) {
@@ -24,11 +27,23 @@ function isTimeAfterNow(givenTime) {
   }
 }
 
+function formatTimeString(timeStr) {
+  // Parse time string like "05:30 (EAT)" or "05:30 AM" and format it
+  // Remove timezone info if present
+  const timeOnly = timeStr.split(' ')[0]; // Get "05:30" part
+  const [hours, minutes] = timeOnly.split(':').map(Number);
+  
+  // Convert to 12-hour format
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const hours12 = hours % 12 || 12;
+  return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
+}
+
 function formatTime(title, time) {
   return {
     title,
     isUpcoming: isTimeAfterNow(time),
-    time: moment(time, "h:mm a").format("h:mm a"),
+    time: formatTimeString(time),
   };
 }
 
