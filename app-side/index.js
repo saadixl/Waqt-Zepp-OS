@@ -27,6 +27,31 @@ function isTimeAfterNow(givenTime) {
   }
 }
 
+function findNextPrayerIndex(timings) {
+  const now = new Date();
+  const currentHours = now.getHours();
+  const currentMinutes = now.getMinutes();
+  
+  const prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+  
+  // Check each prayer in order
+  for (let i = 0; i < prayerOrder.length; i++) {
+    const prayerName = prayerOrder[i];
+    const timeStr = timings[prayerName];
+    if (!timeStr) continue;
+    
+    const timeOnly = timeStr.split(' ')[0];
+    const [hours, minutes] = timeOnly.split(":").map(Number);
+    
+    if (hours > currentHours || (hours === currentHours && minutes > currentMinutes)) {
+      return i; // Found the next prayer
+    }
+  }
+  
+  // If no prayer found (all have passed, meaning after Isha), Fajr is the next prayer (tomorrow)
+  return 0; // Fajr is the next prayer
+}
+
 function formatTimeString(timeStr) {
   // Parse time string like "05:30 (EAT)" or "05:30 AM" and format it
   // Remove timezone info if present
@@ -39,10 +64,10 @@ function formatTimeString(timeStr) {
   return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
 }
 
-function formatTime(title, time) {
+function formatTime(title, time, isNextPrayer) {
   return {
     title,
-    isUpcoming: isTimeAfterNow(time),
+    isUpcoming: isNextPrayer,
     time: formatTimeString(time),
   };
 }
@@ -72,12 +97,15 @@ async function fetchPrayerTimes(res, action) {
     const timings = resBody.status === 'OK' ? resBody.data.timings : null;
     let result = [];
     if (timings) {
-      const fajr = formatTime("Fajr", timings.Fajr);
-      const sunrise = formatTime("Sunrise", timings.Sunrise);
-      const dhuhr = formatTime("Dhuhr", timings.Dhuhr);
-      const asr = formatTime("Asr", timings.Asr);
-      const maghrib = formatTime("Maghrib", timings.Maghrib);
-      const isha = formatTime("Isha", timings.Isha);
+      // Find which prayer is next (handles wrap-around: after Isha, Fajr is next)
+      const nextPrayerIndex = findNextPrayerIndex(timings);
+      
+      const fajr = formatTime("Fajr", timings.Fajr, nextPrayerIndex === 0);
+      const sunrise = formatTime("Sunrise", timings.Sunrise, nextPrayerIndex === 1);
+      const dhuhr = formatTime("Dhuhr", timings.Dhuhr, nextPrayerIndex === 2);
+      const asr = formatTime("Asr", timings.Asr, nextPrayerIndex === 3);
+      const maghrib = formatTime("Maghrib", timings.Maghrib, nextPrayerIndex === 4);
+      const isha = formatTime("Isha", timings.Isha, nextPrayerIndex === 5);
       result = [fajr, sunrise, dhuhr, asr, maghrib, isha];
     }
     res(null, {

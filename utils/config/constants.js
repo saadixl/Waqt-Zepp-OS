@@ -1,5 +1,11 @@
 export const DEFAULT_COLOR = 0xffffff;
 export const DEFAULT_COLOR_TRANSPARENT = 0x00000000;
-export const ACTIVE_COLOR = 0x00FFFF;
-export const CENTER_MESSAGE_COLOR = 0x0DBD2D;
+export const ACTIVE_COLOR = 0x00FFFF; // Cyan for next prayer
+export const ACTIVE_BG_COLOR = 0x1A3A3A; // Dark cyan background for next prayer
+export const INACTIVE_BG_COLOR = 0x2A2A2A; // Dark grey background for inactive items
+export const CENTER_BG_COLOR = 0x353535; // Lighter grey background for middle item (when not next prayer)
+export const HEADER_BG_COLOR = 0x2A2A2A; // Background color for header
+export const CENTER_MESSAGE_COLOR = 0x4DD0E1; // Light blue for header
 export const ERROR_COLOR = 0xFF5733;
+export const TIME_REMAINING_COLOR = 0x4DD0E1; // Light blue for time remaining
+export const HIGHLIGHTED_TIME_REMAINING_COLOR = 0xFFFF00; // Yellow for highlighted prayer time remaining
