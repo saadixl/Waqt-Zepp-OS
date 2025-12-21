@@ -8,6 +8,7 @@
 - Added counter for next prayer time
 - Next prayer time will be always selected and shown in the middle
 
+<img width="421" alt="ss2" src="https://github.com/user-attachments/assets/8fdd3518-10c1-45ce-aa0a-de51cd133dfd" />
 
 # v1.0.0
 ## Features
