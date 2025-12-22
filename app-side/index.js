@@ -2,11 +2,11 @@ import { BaseSideService } from "@zeppos/zml/base-side";
 let currentLocationIndex = 0;
 
 const supportedLocations = [
-  { city: 'Singapore', country: 'Singapore'},
-  { city: 'Dhaka', country: 'Bangladesh'},
-  { city: 'Makkah', country: 'SaudiArabia'},
-  { city: 'London', country: 'UK'},
-  { city: 'NY', country: 'USA'},
+  { city: 'Singapore', country: 'Singapore', timezone: 'SGT', offset: 8},
+  { city: 'Dhaka', country: 'Bangladesh', timezone: 'BDT', offset: 6},
+  { city: 'Makkah', country: 'SaudiArabia', timezone: 'AST', offset: 3},
+  { city: 'London', country: 'UK', timezone: 'GMT', offset: 0},
+  { city: 'NY', country: 'USA', timezone: 'EST', offset: -5},
 ];
 
 function isTimeAfterNow(givenTime) {
@@ -27,27 +27,43 @@ function isTimeAfterNow(givenTime) {
   }
 }
 
-function findNextPrayerIndex(timings) {
+function findNextPrayerIndex(timings, cityTimezoneOffset, watchTimezoneOffset) {
   const now = new Date();
-  const currentHours = now.getHours();
-  const currentMinutes = now.getMinutes();
   
+  // Calculate timezone difference
+  const timezoneDiff = cityTimezoneOffset - watchTimezoneOffset;
+  
+  // Get current time in watch timezone
+  const watchHours = now.getHours();
+  const watchMinutes = now.getMinutes();
+  
+  // Convert to city timezone
+  let cityHours = watchHours + timezoneDiff;
+  let cityMinutes = watchMinutes;
+  
+  // Handle day rollover
+  if (cityHours < 0) {
+    cityHours += 24;
+  } else if (cityHours >= 24) {
+    cityHours -= 24;
+  }
+
   const prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-  
+
   // Check each prayer in order
   for (let i = 0; i < prayerOrder.length; i++) {
     const prayerName = prayerOrder[i];
     const timeStr = timings[prayerName];
     if (!timeStr) continue;
-    
+
     const timeOnly = timeStr.split(' ')[0];
     const [hours, minutes] = timeOnly.split(":").map(Number);
-    
-    if (hours > currentHours || (hours === currentHours && minutes > currentMinutes)) {
+
+    if (hours > cityHours || (hours === cityHours && minutes > cityMinutes)) {
       return i; // Found the next prayer
     }
   }
-  
+
   // If no prayer found (all have passed, meaning after Isha), Fajr is the next prayer (tomorrow)
   return 0; // Fajr is the next prayer
 }
@@ -102,8 +118,12 @@ async function fetchPrayerTimes(res, action) {
     const timings = resBody.status === 'OK' ? resBody.data.timings : null;
     let result = [];
     if (timings) {
+      // Get watch timezone offset for next prayer calculation
+      const watchOffsetMinutes = new Date().getTimezoneOffset();
+      const watchTimezoneOffset = -watchOffsetMinutes / 60;
+      
       // Find which prayer is next (handles wrap-around: after Isha, Fajr is next)
-      const nextPrayerIndex = findNextPrayerIndex(timings);
+      const nextPrayerIndex = findNextPrayerIndex(timings, location.offset, watchTimezoneOffset);
       
       const fajr = formatTime("Fajr", timings.Fajr, nextPrayerIndex === 0);
       const sunrise = formatTime("Sunrise", timings.Sunrise, nextPrayerIndex === 1);
@@ -113,9 +133,17 @@ async function fetchPrayerTimes(res, action) {
       const isha = formatTime("Isha", timings.Isha, nextPrayerIndex === 5);
       result = [fajr, sunrise, dhuhr, asr, maghrib, isha];
     }
+    // Get watch timezone offset (in hours from UTC)
+    // JavaScript Date.getTimezoneOffset() returns offset in minutes, negative for ahead of UTC
+    const watchOffsetMinutes = new Date().getTimezoneOffset();
+    const watchTimezoneOffset = -watchOffsetMinutes / 60; // Convert to hours, negate because getTimezoneOffset is inverted
+    
     res(null, {
       result,
       city: location.city,
+      timezone: location.timezone,
+      cityTimezoneOffset: location.offset,
+      watchTimezoneOffset: watchTimezoneOffset,
     });
   } catch (error) {
     res(null, {

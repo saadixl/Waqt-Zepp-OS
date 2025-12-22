@@ -34,14 +34,15 @@ let currentPrayerData = null; // Store current prayer data
 let isInitialLoad = true; // Track if this is the first render
 let isCitySelectionMode = false; // Track if we're in city selection mode
 let citySelectionOffset = 0; // Track which city is selected in city list
+let currentCityIndex = 0; // Track the currently selected city index
 
-// Supported cities (must match app-side/index.js)
+// Supported cities with timezones (must match app-side/index.js)
 const supportedCities = [
-  'Singapore',
-  'Dhaka',
-  'Makkah',
-  'London',
-  'NY'
+  { name: 'Singapore', timezone: 'SGT' },
+  { name: 'Dhaka', timezone: 'BDT' },
+  { name: 'Makkah', timezone: 'AST' },
+  { name: 'London', timezone: 'GMT' },
+  { name: 'NY', timezone: 'EST' }
 ];
 
 function formatDate(date) {
@@ -158,9 +159,9 @@ Page(
       }, 10);
     },
     showCityList() {
-      // Show city selection list
+      // Show city selection list - center on currently selected city
       isCitySelectionMode = true;
-      citySelectionOffset = 0; // Start at first city
+      citySelectionOffset = currentCityIndex; // Start at currently selected city
       this.renderCityList();
     },
     navigateCityList(direction) {
@@ -176,9 +177,7 @@ Page(
       // Select the current city and fetch data
       if (isCitySelectionMode) {
         isCitySelectionMode = false;
-        // Find the city index and send appropriate action
-        // We need to calculate how many DOWN actions to send
-        // For now, let's send the city index as action
+        currentCityIndex = citySelectionOffset; // Update current city index
         rotationOffset = 0;
         isInitialLoad = true;
         // Send the city index to app-side
@@ -251,13 +250,15 @@ Page(
         prayerWidgets.push(bgWidget);
         
         // City name widget - center aligned
+        const cityData = supportedCities[actualIndex];
+        const cityText = `${cityData.name} (${cityData.timezone})`;
         const cityWidget = hmUI.createWidget(hmUI.widget.TEXT, {
           ...textStyle,
           x: 0,
           y: y,
           w: DEVICE_WIDTH,
           h: LIST_ITEM_HEIGHT,
-          text: supportedCities[actualIndex],
+          text: cityText,
         });
         prayerWidgets.push(cityWidget);
       }
@@ -479,6 +480,12 @@ Page(
               text: "Something went wrong!",
             });
           } else {
+            // Update current city index based on the city name in the response
+            const cityName = data.city;
+            const cityIndex = supportedCities.findIndex(city => city.name === cityName);
+            if (cityIndex >= 0) {
+              currentCityIndex = cityIndex;
+            }
             this.renderPrayerTimeList(data);
           }
           currentRequest = null;
