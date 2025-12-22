@@ -37,10 +37,15 @@ let citySelectionOffset = 0; // Track which city is selected in city list
 let currentCityIndex = 0; // Track the currently selected city index
 
 // Supported cities with timezones (must match app-side/index.js)
+// Sorted from east to west (highest to lowest UTC offset)
 const supportedCities = [
+  { name: 'Sydney', timezone: 'AEST' },
+  { name: 'Tokyo', timezone: 'JST' },
   { name: 'Singapore', timezone: 'SGT' },
   { name: 'Dhaka', timezone: 'BDT' },
   { name: 'Makkah', timezone: 'AST' },
+  { name: 'Istanbul', timezone: 'TRT' },
+  { name: 'Doha', timezone: 'AST' },
   { name: 'London', timezone: 'GMT' },
   { name: 'NY', timezone: 'EST' }
 ];
