@@ -1,12 +1,12 @@
 {
   "name": "Waqt",
   "version": "3.0.0",
-  "description": "",
+  "description": "Muslim prayer times application",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Masudul Haque",
   "license": "ISC",
   "devDependencies": {
     "@zeppos/device-types": "^3.0.0"
