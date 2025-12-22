@@ -11,7 +11,8 @@ const supportedLocations = [
   { city: 'Istanbul', country: 'Turkey', timezone: 'TRT', offset: 3},
   { city: 'Doha', country: 'Qatar', timezone: 'AST', offset: 3},
   { city: 'London', country: 'UK', timezone: 'GMT', offset: 0},
-  { city: 'NY', country: 'USA', timezone: 'EST', offset: -5},
+  { city: 'New York', country: 'USA', timezone: 'EST', offset: -5},
+  { city: 'San Francisco', country: 'USA', timezone: 'PST', offset: -8},
 ];
 
 function isTimeAfterNow(givenTime) {
@@ -115,8 +116,10 @@ async function fetchPrayerTimes(res, action) {
       }
     }
     const location = supportedLocations[currentLocationIndex];
+    // Remove spaces from city name for API call
+    const cityForAPI = location.city.replace(/\s+/g, '');
     const response = await fetch({
-      url: `https://api.aladhan.com/v1/timingsByCity?city=${location.city}&country=${location.country}`,
+      url: `https://api.aladhan.com/v1/timingsByCity?city=${cityForAPI}&country=${location.country}`,
       method: 'GET'
     })
     const resBody = typeof response.body === 'string' ? JSON.parse(response.body) : response.body

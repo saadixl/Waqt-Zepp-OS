@@ -47,7 +47,8 @@ const supportedCities = [
   { name: 'Istanbul', timezone: 'TRT' },
   { name: 'Doha', timezone: 'AST' },
   { name: 'London', timezone: 'GMT' },
-  { name: 'NY', timezone: 'EST' }
+  { name: 'New York', timezone: 'EST' },
+  { name: 'San Francisco', timezone: 'PST' }
 ];
 
 function formatDate(date) {
