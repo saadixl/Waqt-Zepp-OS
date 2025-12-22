@@ -228,12 +228,14 @@ Page(
             ...ACTIVE_PRAYER_NAME_TEXT,
             text_style: hmUI.text_style.BOLD,
             align_h: hmUI.align.CENTER_H,
+            align_v: hmUI.align.CENTER_V,
           };
         } else {
           bgStyle = { color: 0x00000000 }; // Transparent
           textStyle = {
             ...PRAYER_NAME_TEXT,
             align_h: hmUI.align.CENTER_H,
+            align_v: hmUI.align.CENTER_V,
           };
         }
         
@@ -247,35 +249,13 @@ Page(
         });
         prayerWidgets.push(bgWidget);
         
-        // Add yellow top and bottom borders for center item
-        if (isCenter) {
-          const borderWidth = px(2);
-          const topBorderWidget = hmUI.createWidget(hmUI.widget.FILL_RECT, {
-            x: 0,
-            y: y,
-            w: DEVICE_WIDTH,
-            h: borderWidth,
-            color: 0xFFFF00,
-          });
-          prayerWidgets.push(topBorderWidget);
-          
-          const bottomBorderWidget = hmUI.createWidget(hmUI.widget.FILL_RECT, {
-            x: 0,
-            y: y + LIST_ITEM_HEIGHT - borderWidth,
-            w: DEVICE_WIDTH,
-            h: borderWidth,
-            color: 0xFFFF00,
-          });
-          prayerWidgets.push(bottomBorderWidget);
-        }
-        
-        // City name widget
+        // City name widget - center aligned
         const cityWidget = hmUI.createWidget(hmUI.widget.TEXT, {
           ...textStyle,
-          x: padding + itemPadding,
-          y: y + px(14),
-          w: itemWidth - (itemPadding * 2),
-          h: px(45),
+          x: 0,
+          y: y,
+          w: DEVICE_WIDTH,
+          h: LIST_ITEM_HEIGHT,
           text: supportedCities[actualIndex],
         });
         prayerWidgets.push(cityWidget);
@@ -402,30 +382,6 @@ Page(
           ...bgStyle,
         });
         prayerWidgets.push(bgWidget);
-        
-        // Add yellow top and bottom borders for center item
-        if (isCenter) {
-          const borderWidth = px(2);
-          // Top border
-          const topBorderWidget = hmUI.createWidget(hmUI.widget.FILL_RECT, {
-            x: 0,
-            y: y,
-            w: DEVICE_WIDTH,
-            h: borderWidth,
-            color: 0xFFFF00, // Yellow
-          });
-          prayerWidgets.push(topBorderWidget);
-          
-          // Bottom border
-          const bottomBorderWidget = hmUI.createWidget(hmUI.widget.FILL_RECT, {
-            x: 0,
-            y: y + LIST_ITEM_HEIGHT - borderWidth,
-            w: DEVICE_WIDTH,
-            h: borderWidth,
-            color: 0xFFFF00, // Yellow
-          });
-          prayerWidgets.push(bottomBorderWidget);
-        }
         
         // Prayer name widget (first line, left)
         const nameWidget = hmUI.createWidget(hmUI.widget.TEXT, {
