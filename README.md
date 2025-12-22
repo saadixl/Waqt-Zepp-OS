@@ -1,7 +1,18 @@
-# It's a work in progress
-
+# v2.0.0
 ## Features
-- Show prayer time for Singapore (For now)
+- Show prayer time for Singapore by default
+- Click on Select button to navigate between cities (Singapore, Dhaka, Makkah, London, NY available right now)
+- Showing the prayer times in a list with bigger font
+- Click on Up/Down button to scroll between prayer times
+- Added time left for each prayer times
+- Added counter for next prayer time
+- Next prayer time will be always selected and shown in the middle
+
+<img width="421" alt="ss2" src="https://github.com/user-attachments/assets/8fdd3518-10c1-45ce-aa0a-de51cd133dfd" />
+
+# v1.0.0
+## Features
+- Show prayer time for Singapore by default
 - Click on Up/Down button to navigate between cities (Singapore, Dhaka, Makkah, London, NY available right now)
 - Click on Select button to refresh the prayer times
 
