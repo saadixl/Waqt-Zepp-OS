@@ -3,7 +3,7 @@ import { onKey, KEY_UP, KEY_DOWN, KEY_SELECT, KEY_EVENT_CLICK } from '@zos/inter
 import { log as Logger, px } from "@zos/utils";
 import { BasePage } from "@zeppos/zml/base-page";
 import { DEVICE_WIDTH, DEVICE_HEIGHT } from "../utils/config/device";
-import { ACTIVE_COLOR } from "../utils/config/constants";
+import { ACTIVE_COLOR, SELECTED_BG_COLOR, DARK_ORANGE } from "../utils/config/constants";
 import {
   HEADER_TEXT,
   HEADER_BG,
@@ -198,7 +198,7 @@ Page(
       // Render header
       headerWidget = hmUI.createWidget(hmUI.widget.TEXT, {
         ...HEADER_TEXT,
-        color: 0xFFFF00, // Yellow color
+        color: DARK_ORANGE, // Dark orange color
         text_style: hmUI.text_style.BOLD,
         text: "Select City",
         align_h: hmUI.align.CENTER_H,
@@ -223,9 +223,10 @@ Page(
         let textStyle;
         
         if (isCenter) {
-          bgStyle = ACTIVE_PRAYER_BG;
+          bgStyle = { color: SELECTED_BG_COLOR, radius: px(8) }; // Dark orange background
           textStyle = {
             ...ACTIVE_PRAYER_NAME_TEXT,
+            color: 0x000000, // Black font color for selected city
             text_style: hmUI.text_style.BOLD,
             align_h: hmUI.align.CENTER_H,
             align_v: hmUI.align.CENTER_V,
@@ -280,7 +281,7 @@ Page(
         w: DEVICE_WIDTH,
         h: px(40),
         text: "Loading...",
-        color: 0xFFFF00, // Yellow color
+        color: DARK_ORANGE, // Dark orange color
         text_size: px(36), // Increased font size
         text_style: hmUI.text_style.BOLD, // Bold text
         align_h: hmUI.align.CENTER_H, // Center horizontally
@@ -323,7 +324,7 @@ Page(
       // Render header with city name centered (no background, no icon, no date)
       headerWidget = hmUI.createWidget(hmUI.widget.TEXT, {
         ...HEADER_TEXT,
-        color: 0xFFFF00, // Yellow color for location
+        color: 0xFFA500, // Orange color for location
         text: city,
         align_h: hmUI.align.CENTER_H,
         align_v: hmUI.align.CENTER_V,
@@ -351,20 +352,28 @@ Page(
         let timeTextStyle;
         
         if (isCenter) {
-          // Middle item (focused) gets active background and font color
-          bgStyle = ACTIVE_PRAYER_BG;
-          nameTextStyle = ACTIVE_PRAYER_NAME_TEXT;
-          timeTextStyle = ACTIVE_PRAYER_TIME_TEXT;
+          // Middle item (focused) gets dark orange background and black font color
+          bgStyle = { color: SELECTED_BG_COLOR, radius: px(8) }; // Dark orange background
+          nameTextStyle = {
+            ...ACTIVE_PRAYER_NAME_TEXT,
+            color: 0x000000, // Black font color
+            text_style: hmUI.text_style.BOLD,
+          };
+          timeTextStyle = {
+            ...ACTIVE_PRAYER_TIME_TEXT,
+            color: 0x000000, // Black font color
+            text_style: hmUI.text_style.BOLD,
+          };
         } else if (isNext) {
-          // Next prayer (when not in middle) gets accent blue font color, transparent background
+          // Next prayer (when not in middle) gets dark orange font color, transparent background
           bgStyle = { color: 0x00000000 }; // Transparent background
           nameTextStyle = {
             ...PRAYER_NAME_TEXT,
-            color: ACTIVE_COLOR, // Accent blue for next prayer
+            color: DARK_ORANGE, // Dark orange for next prayer
           };
           timeTextStyle = {
             ...PRAYER_TIME_TEXT,
-            color: ACTIVE_COLOR, // Accent blue for next prayer
+            color: DARK_ORANGE, // Dark orange for next prayer
           };
         } else {
           bgStyle = { color: 0x00000000 }; // Transparent background for non-center items
@@ -410,21 +419,13 @@ Page(
         const timeRemaining = calculateTimeRemaining(result[actualIndex].time, isNext);
         const remainingText = isNext ? timeRemaining : timeRemaining; // No "in" prefix for counter format
         
-        // Determine color: yellow for highlighted (middle) and next prayer, otherwise based on status
-        let remainingColor;
-        if (isCenter) {
-          remainingColor = 0xFFFF00; // Yellow for highlighted prayer time (middle position)
-        } else if (isNext) {
-          remainingColor = 0xFFFF00; // Yellow for next prayer countdown
-        } else if (result[actualIndex].isUpcoming) {
-          remainingColor = TIME_REMAINING_COLOR; // Light blue for upcoming prayers
-        } else {
-          remainingColor = 0x888888; // Grey for past prayers
-        }
+        // Time remaining colors: white for center item, regular gray for others
+        const remainingColor = isCenter ? 0xFFFFFF : 0x888888; // White for center, regular gray for others
         
         const remainingWidget = hmUI.createWidget(hmUI.widget.TEXT, {
           ...TIME_REMAINING_TEXT,
           color: remainingColor,
+          text_size: isCenter ? TIME_REMAINING_TEXT.text_size + 1 : TIME_REMAINING_TEXT.text_size, // 1px bigger for center
           x: padding + itemPadding, // Keep original left padding
           y: y + px(64), // Increased top margin for more spacing
           w: itemWidth - (itemPadding * 2), // Original width
