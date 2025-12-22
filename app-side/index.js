@@ -5,13 +5,23 @@ let currentLocationIndex = 0;
 const supportedLocations = [
   { city: 'Sydney', country: 'Australia', timezone: 'AEST', offset: 10},
   { city: 'Tokyo', country: 'Japan', timezone: 'JST', offset: 9},
+  { city: 'Kuala Lumpur', country: 'Malaysia', timezone: 'MYT', offset: 8},
   { city: 'Singapore', country: 'Singapore', timezone: 'SGT', offset: 8},
+  { city: 'Jakarta', country: 'Indonesia', timezone: 'WIB', offset: 7},
   { city: 'Dhaka', country: 'Bangladesh', timezone: 'BDT', offset: 6},
+  { city: 'New Delhi', country: 'India', timezone: 'IST', offset: 5.5},
+  { city: 'Karachi', country: 'Pakistan', timezone: 'PKT', offset: 5},
+  { city: 'Dubai', country: 'UAE', timezone: 'GST', offset: 4},
+  { city: 'Tehran', country: 'Iran', timezone: 'IRST', offset: 3.5},
+  { city: 'Doha', country: 'Qatar', timezone: 'AST', offset: 3},
+  { city: 'Moscow', country: 'Russia', timezone: 'MSK', offset: 3},
   { city: 'Makkah', country: 'SaudiArabia', timezone: 'AST', offset: 3},
   { city: 'Istanbul', country: 'Turkey', timezone: 'TRT', offset: 3},
-  { city: 'Doha', country: 'Qatar', timezone: 'AST', offset: 3},
+  { city: 'Paris', country: 'France', timezone: 'CET', offset: 1},
   { city: 'London', country: 'UK', timezone: 'GMT', offset: 0},
+  { city: 'Toronto', country: 'Canada', timezone: 'EST', offset: -5},
   { city: 'New York', country: 'USA', timezone: 'EST', offset: -5},
+  { city: 'Austin', country: 'USA', timezone: 'CST', offset: -6},
   { city: 'San Francisco', country: 'USA', timezone: 'PST', offset: -8},
 ];
 
@@ -36,22 +46,30 @@ function isTimeAfterNow(givenTime) {
 function findNextPrayerIndex(timings, cityTimezoneOffset, watchTimezoneOffset) {
   const now = new Date();
   
-  // Calculate timezone difference
+  // Calculate timezone difference (can be fractional for offsets like 5.5, 3.5)
   const timezoneDiff = cityTimezoneOffset - watchTimezoneOffset;
   
   // Get current time in watch timezone
   const watchHours = now.getHours();
   const watchMinutes = now.getMinutes();
   
-  // Convert to city timezone
-  let cityHours = watchHours + timezoneDiff;
-  let cityMinutes = watchMinutes;
+  // Convert to city timezone (handle fractional offsets)
+  const totalMinutes = watchHours * 60 + watchMinutes + (timezoneDiff * 60);
+  let cityHours = Math.floor(totalMinutes / 60);
+  let cityMinutes = Math.floor(totalMinutes % 60);
   
   // Handle day rollover
   if (cityHours < 0) {
     cityHours += 24;
   } else if (cityHours >= 24) {
     cityHours -= 24;
+  }
+  
+  // Ensure minutes are non-negative
+  if (cityMinutes < 0) {
+    cityMinutes += 60;
+    cityHours -= 1;
+    if (cityHours < 0) cityHours += 24;
   }
 
   const prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];

@@ -41,13 +41,23 @@ let currentCityIndex = 0; // Track the currently selected city index
 const supportedCities = [
   { name: 'Sydney', timezone: 'AEST' },
   { name: 'Tokyo', timezone: 'JST' },
+  { name: 'Kuala Lumpur', timezone: 'MYT' },
   { name: 'Singapore', timezone: 'SGT' },
+  { name: 'Jakarta', timezone: 'WIB' },
   { name: 'Dhaka', timezone: 'BDT' },
+  { name: 'New Delhi', timezone: 'IST' },
+  { name: 'Karachi', timezone: 'PKT' },
+  { name: 'Dubai', timezone: 'GST' },
+  { name: 'Tehran', timezone: 'IRST' },
+  { name: 'Moscow', timezone: 'MSK' },
   { name: 'Makkah', timezone: 'AST' },
   { name: 'Istanbul', timezone: 'TRT' },
   { name: 'Doha', timezone: 'AST' },
+  { name: 'Paris', timezone: 'CET' },
   { name: 'London', timezone: 'GMT' },
+  { name: 'Toronto', timezone: 'EST' },
   { name: 'New York', timezone: 'EST' },
+  { name: 'Austin', timezone: 'CST' },
   { name: 'San Francisco', timezone: 'PST' }
 ];
 
