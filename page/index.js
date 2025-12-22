@@ -325,7 +325,7 @@ Page(
       // Render header with city name centered (no background, no icon, no date)
       headerWidget = hmUI.createWidget(hmUI.widget.TEXT, {
         ...HEADER_TEXT,
-        color: 0xFFA500, // Orange color for location
+        color: DARK_ORANGE, // Orange color for location (hex: D44C02)
         text: city,
         align_h: hmUI.align.CENTER_H,
         align_v: hmUI.align.CENTER_V,
