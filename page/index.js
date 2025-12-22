@@ -251,14 +251,13 @@ Page(
         
         // City name widget - center aligned
         const cityData = supportedCities[actualIndex];
-        const cityText = `${cityData.name} (${cityData.timezone})`;
         const cityWidget = hmUI.createWidget(hmUI.widget.TEXT, {
           ...textStyle,
           x: 0,
           y: y,
           w: DEVICE_WIDTH,
           h: LIST_ITEM_HEIGHT,
-          text: cityText,
+          text: cityData.name,
         });
         prayerWidgets.push(cityWidget);
       }
