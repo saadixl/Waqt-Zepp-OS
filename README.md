@@ -5,13 +5,26 @@
 - On select button click, now a list of cities is shown.
 - Clicking on Up/Down will scroll between cities.
 - Clicking the select again selects the city.
+
+<table>
+  <tr>
+    <td>
+      <img width="320" alt="IMG_1727" src="https://github.com/user-attachments/assets/47e985e9-3ac9-4dd3-8f0d-8ea7f759a8cd" />
+    </td>
+    <td>
+      <img width="320" alt="IMG_1727" src="https://github.com/user-attachments/assets/47e985e9-3ac9-4dd3-8f0d-8ea7f759a8cd" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img width="320" alt="IMG_1729" src="https://github.com/user-attachments/assets/1c42fe3e-f1f2-4ea5-8255-f3ae5b1515fc" />
+    </td>
+    <td>
+      <img width="320" alt="IMG_1730" src="https://github.com/user-attachments/assets/3d96da51-b14a-41fb-95a1-d93d02e55dea" />
+    </td>
+  </tr>
+</table>
   
-<img width="480" height="480" alt="IMG_1727" src="https://github.com/user-attachments/assets/47e985e9-3ac9-4dd3-8f0d-8ea7f759a8cd" />
-<img width="480" height="480" alt="IMG_1728" src="https://github.com/user-attachments/assets/65cb86b8-1f45-4b9a-a267-f99065c76a0a" />
-<img width="480" height="480" alt="IMG_1729" src="https://github.com/user-attachments/assets/1c42fe3e-f1f2-4ea5-8255-f3ae5b1515fc" />
-<img width="480" height="480" alt="IMG_1730" src="https://github.com/user-attachments/assets/3d96da51-b14a-41fb-95a1-d93d02e55dea" />
-
-
 # v2.0.0
 ## Features
 - Show prayer time for Singapore by default
