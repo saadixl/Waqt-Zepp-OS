@@ -32,6 +32,17 @@ let updateTimer = null;
 let rotationOffset = 0; // Track rotation position
 let currentPrayerData = null; // Store current prayer data
 let isInitialLoad = true; // Track if this is the first render
+let isCitySelectionMode = false; // Track if we're in city selection mode
+let citySelectionOffset = 0; // Track which city is selected in city list
+
+// Supported cities (must match app-side/index.js)
+const supportedCities = [
+  'Singapore',
+  'Dhaka',
+  'Makkah',
+  'London',
+  'NY'
+];
 
 function formatDate(date) {
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -114,32 +125,165 @@ Page(
   BasePage({
     state: {},
     build() {
-      onKey({
-        callback: (key, keyEvent) => {
-          if (keyEvent === KEY_EVENT_CLICK) {
-            if (key === KEY_SELECT) {
-              this.changeLocation(); // Change location on SELECT
-            } else if (key === KEY_UP) {
-              this.rotateList(-1); // Rotate up (previous item)
-            } else if (key === KEY_DOWN) {
-              this.rotateList(1); // Rotate down (next item)
-            }
-          } else {
-            zepos.defaultOnKey(key, context);
-          }
-        },
-      });
+            onKey({
+              callback: (key, keyEvent) => {
+                if (keyEvent === KEY_EVENT_CLICK) {
+                  if (key === KEY_SELECT) {
+                    if (isCitySelectionMode) {
+                      this.selectCity(); // Select the city
+                    } else {
+                      this.showCityList(); // Show city list on SELECT
+                    }
+                  } else if (key === KEY_UP) {
+                    if (isCitySelectionMode) {
+                      this.navigateCityList(-1); // Navigate up in city list
+                    } else {
+                      this.rotateList(-1); // Rotate up (previous item)
+                    }
+                  } else if (key === KEY_DOWN) {
+                    if (isCitySelectionMode) {
+                      this.navigateCityList(1); // Navigate down in city list
+                    } else {
+                      this.rotateList(1); // Rotate down (next item)
+                    }
+                  }
+                } else {
+                  zepos.defaultOnKey(key, context);
+                }
+              },
+            });
 
       setTimeout(() => {
         this.fetchData('');
       }, 10);
     },
+    showCityList() {
+      // Show city selection list
+      isCitySelectionMode = true;
+      citySelectionOffset = 0; // Start at first city
+      this.renderCityList();
+    },
+    navigateCityList(direction) {
+      // Navigate through city list
+      if (isCitySelectionMode) {
+        citySelectionOffset += direction;
+        // Circular wrapping
+        citySelectionOffset = ((citySelectionOffset % supportedCities.length) + supportedCities.length) % supportedCities.length;
+        this.renderCityList();
+      }
+    },
+    selectCity() {
+      // Select the current city and fetch data
+      if (isCitySelectionMode) {
+        isCitySelectionMode = false;
+        // Find the city index and send appropriate action
+        // We need to calculate how many DOWN actions to send
+        // For now, let's send the city index as action
+        rotationOffset = 0;
+        isInitialLoad = true;
+        // Send the city index to app-side
+        this.fetchData(`CITY_${citySelectionOffset}`);
+      }
+    },
+    renderCityList() {
+      deleteAllWidgets();
+      
+      // Calculate how many items can fit on screen
+      const itemsPerScreen = 3;
+      const centerIndex = Math.floor(itemsPerScreen / 2);
+      
+      // Normalize city selection offset
+      citySelectionOffset = ((citySelectionOffset % supportedCities.length) + supportedCities.length) % supportedCities.length;
+      
+      // Render header
+      headerWidget = hmUI.createWidget(hmUI.widget.TEXT, {
+        ...HEADER_TEXT,
+        color: 0xFFFF00, // Yellow color
+        text_style: hmUI.text_style.BOLD,
+        text: "Select City",
+        align_h: hmUI.align.CENTER_H,
+        align_v: hmUI.align.CENTER_V,
+      });
+      
+      // Render city list
+      prayerWidgets = [];
+      const padding = LIST_PADDING - px(10);
+      const itemPadding = px(30);
+      const itemWidth = DEVICE_WIDTH - (padding * 2);
+      
+      for (let displayIndex = 0; displayIndex < itemsPerScreen; displayIndex++) {
+        // Calculate the actual city index with circular wrapping
+        // citySelectionOffset is the center item, so we need to adjust
+        const actualIndex = (citySelectionOffset + displayIndex - centerIndex + supportedCities.length) % supportedCities.length;
+        const isCenter = displayIndex === centerIndex;
+        const y = LIST_START_Y + (displayIndex * (LIST_ITEM_HEIGHT + LIST_ITEM_SPACING));
+        
+        // Determine styles
+        let bgStyle;
+        let textStyle;
+        
+        if (isCenter) {
+          bgStyle = ACTIVE_PRAYER_BG;
+          textStyle = {
+            ...ACTIVE_PRAYER_NAME_TEXT,
+            text_style: hmUI.text_style.BOLD,
+            align_h: hmUI.align.CENTER_H,
+          };
+        } else {
+          bgStyle = { color: 0x00000000 }; // Transparent
+          textStyle = {
+            ...PRAYER_NAME_TEXT,
+            align_h: hmUI.align.CENTER_H,
+          };
+        }
+        
+        // Create background
+        const bgWidget = hmUI.createWidget(hmUI.widget.FILL_RECT, {
+          x: 0,
+          y: y,
+          w: DEVICE_WIDTH,
+          h: LIST_ITEM_HEIGHT,
+          ...bgStyle,
+        });
+        prayerWidgets.push(bgWidget);
+        
+        // Add yellow top and bottom borders for center item
+        if (isCenter) {
+          const borderWidth = px(2);
+          const topBorderWidget = hmUI.createWidget(hmUI.widget.FILL_RECT, {
+            x: 0,
+            y: y,
+            w: DEVICE_WIDTH,
+            h: borderWidth,
+            color: 0xFFFF00,
+          });
+          prayerWidgets.push(topBorderWidget);
+          
+          const bottomBorderWidget = hmUI.createWidget(hmUI.widget.FILL_RECT, {
+            x: 0,
+            y: y + LIST_ITEM_HEIGHT - borderWidth,
+            w: DEVICE_WIDTH,
+            h: borderWidth,
+            color: 0xFFFF00,
+          });
+          prayerWidgets.push(bottomBorderWidget);
+        }
+        
+        // City name widget
+        const cityWidget = hmUI.createWidget(hmUI.widget.TEXT, {
+          ...textStyle,
+          x: padding + itemPadding,
+          y: y + px(14),
+          w: itemWidth - (itemPadding * 2),
+          h: px(45),
+          text: supportedCities[actualIndex],
+        });
+        prayerWidgets.push(cityWidget);
+      }
+    },
     changeLocation() {
-      // Change location by sending DOWN action (cycles through locations)
-      // Reset rotation when changing location
-      rotationOffset = 0;
-      isInitialLoad = true; // Reset initial load flag so next prayer is centered
-      this.fetchData('DOWN');
+      // Legacy function - now handled by city selection
+      this.showCityList();
     },
     rotateList(direction) {
       // Rotate the list and re-render

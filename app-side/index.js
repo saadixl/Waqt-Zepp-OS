@@ -74,14 +74,19 @@ function formatTime(title, time, isNextPrayer) {
 
 async function fetchPrayerTimes(res, action) {
   try {
-    if (action === 'UP') {
+    // Handle city selection by index
+    if (action && action.startsWith('CITY_')) {
+      const cityIndex = parseInt(action.split('_')[1]);
+      if (cityIndex >= 0 && cityIndex < supportedLocations.length) {
+        currentLocationIndex = cityIndex;
+      }
+    } else if (action === 'UP') {
       if (currentLocationIndex === 0) {
         currentLocationIndex = supportedLocations.length - 1;
       } else {
         currentLocationIndex--;
       }
-    }
-    if (action === 'DOWN') {
+    } else if (action === 'DOWN') {
       if (currentLocationIndex === supportedLocations.length - 1) {
         currentLocationIndex = 0;
       } else {
