@@ -7,13 +7,13 @@ const supportedLocations = [
   { city: 'Tokyo', country: 'Japan', timezone: 'JST', offset: 9},
   { city: 'Kuala Lumpur', country: 'Malaysia', timezone: 'MYT', offset: 8},
   { city: 'Singapore', country: 'Singapore', timezone: 'SGT', offset: 8},
-  { city: 'Jakarta', country: 'Indonesia', timezone: 'WIB', offset: 7},
+  { city: 'Jakarta', country: 'Indonesia', timezone: 'WIB', offset: 7, latitude: -6.2088, longitude: 106.8456},
   { city: 'Dhaka', country: 'Bangladesh', timezone: 'BDT', offset: 6},
   { city: 'New Delhi', country: 'India', timezone: 'IST', offset: 5.5},
   { city: 'Karachi', country: 'Pakistan', timezone: 'PKT', offset: 5},
   { city: 'Dubai', country: 'UAE', timezone: 'GST', offset: 4},
   { city: 'Tehran', country: 'Iran', timezone: 'IRST', offset: 3.5},
-  { city: 'Doha', country: 'Qatar', timezone: 'AST', offset: 3},
+  { city: 'Doha', country: 'Qatar', timezone: 'AST', offset: 3, latitude: 25.2854, longitude: 51.5310},
   { city: 'Moscow', country: 'Russia', timezone: 'MSK', offset: 3},
   { city: 'Makkah', country: 'SaudiArabia', timezone: 'AST', offset: 3},
   { city: 'Istanbul', country: 'Turkey', timezone: 'TRT', offset: 3},
@@ -134,14 +134,39 @@ async function fetchPrayerTimes(res, action) {
       }
     }
     const location = supportedLocations[currentLocationIndex];
-    // Remove spaces from city name for API call
-    const cityForAPI = location.city.replace(/\s+/g, '');
-    const response = await fetch({
-      url: `https://api.aladhan.com/v1/timingsByCity?city=${cityForAPI}&country=${location.country}`,
-      method: 'GET'
-    })
-    const resBody = typeof response.body === 'string' ? JSON.parse(response.body) : response.body
-    const timings = resBody.status === 'OK' ? resBody.data.timings : null;
+    let response;
+    
+    // For Jakarta and Doha, use coordinates API as they might not work with city name
+    if (location.latitude && location.longitude) {
+      const timestamp = Math.floor(Date.now() / 1000);
+      console.log(`Fetching prayer times for: ${location.city} using coordinates (${location.latitude}, ${location.longitude})`);
+      response = await fetch({
+        url: `https://api.aladhan.com/v1/timings/${timestamp}?latitude=${location.latitude}&longitude=${location.longitude}`,
+        method: 'GET'
+      });
+    } else {
+      // Remove spaces from city name for API call and encode for URL
+      const cityForAPI = encodeURIComponent(location.city.replace(/\s+/g, ''));
+      const countryForAPI = encodeURIComponent(location.country);
+      console.log(`Fetching prayer times for: ${location.city}, ${location.country}`);
+      console.log(`API URL: city=${cityForAPI}&country=${countryForAPI}`);
+      response = await fetch({
+        url: `https://api.aladhan.com/v1/timingsByCity?city=${cityForAPI}&country=${countryForAPI}`,
+        method: 'GET'
+      });
+    }
+    console.log(`Response code: ${response?.code}`);
+    const resBody = typeof response.body === 'string' ? JSON.parse(response.body) : response.body;
+    console.log(`API status: ${resBody?.status}`);
+    if (resBody?.status !== 'OK') {
+      console.log(`API error response:`, JSON.stringify(resBody).substring(0, 300));
+      throw new Error(`API returned status: ${resBody?.status || 'Unknown'}`);
+    }
+    if (!resBody.data || !resBody.data.timings) {
+      console.log(`No timings data in response`);
+      throw new Error('No timings data received from API');
+    }
+    const timings = resBody.data.timings;
     let result = [];
     if (timings) {
       // Get watch timezone offset for next prayer calculation
@@ -172,8 +197,11 @@ async function fetchPrayerTimes(res, action) {
       watchTimezoneOffset: watchTimezoneOffset,
     });
   } catch (error) {
+    console.log("fetchPrayerTimes error:", error);
     res(null, {
-      result: "ERROR",
+      result: [],
+      city: "Error fetching data",
+      error: error.message || "Unknown error",
     });
   }
 };
