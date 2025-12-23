@@ -120,19 +120,49 @@ function formatDate(date) {
   return `${day} ${month} ${dayNum.toString().padStart(2, '0')} ${year}`;
 }
 
-function calculateTimeRemaining(prayerTimeStr, formatAsCounter = false) {
+function calculateTimeRemaining(prayerTimeStr, formatAsCounter = false, cityTimezoneOffset = 0, watchTimezoneOffset = 0) {
   const now = new Date();
-  const currentHours = now.getHours();
-  const currentMinutes = now.getMinutes();
-  const currentSeconds = now.getSeconds();
   
-  // Parse time string (format: "5:37 AM" or "05:37 PM")
+  // Calculate timezone difference
+  const timezoneDiff = cityTimezoneOffset - watchTimezoneOffset;
+  
+  // Get current time in watch timezone
+  const watchHours = now.getHours();
+  const watchMinutes = now.getMinutes();
+  const watchSeconds = now.getSeconds();
+  
+  // Convert watch time to city timezone
+  let cityHours = watchHours + timezoneDiff;
+  let cityMinutes = watchMinutes;
+  let citySeconds = watchSeconds;
+  
+  // Handle fractional hours in timezoneDiff
+  const fractionalHours = timezoneDiff % 1;
+  if (fractionalHours !== 0) {
+    cityMinutes += Math.round(fractionalHours * 60);
+    if (cityMinutes >= 60) {
+      cityMinutes -= 60;
+      cityHours += 1;
+    } else if (cityMinutes < 0) {
+      cityMinutes += 60;
+      cityHours -= 1;
+    }
+  }
+  
+  // Handle day rollover
+  if (cityHours < 0) {
+    cityHours += 24;
+  } else if (cityHours >= 24) {
+    cityHours -= 24;
+  }
+  
+  // Parse prayer time string (format: "5:37 AM" or "05:37 PM")
   const parts = prayerTimeStr.trim().split(' ');
   const timeOnly = parts[0];
   const period = parts[1] || '';
   const [hours, minutes] = timeOnly.split(':').map(Number);
   
-  // Convert to 24-hour format
+  // Convert prayer time to 24-hour format
   let prayerHours = hours % 12;
   if (period.toUpperCase() === 'PM' && hours !== 12) {
     prayerHours += 12;
@@ -141,8 +171,8 @@ function calculateTimeRemaining(prayerTimeStr, formatAsCounter = false) {
   }
   const prayerMinutes = minutes;
   
-  // Calculate time difference in seconds
-  let diffSeconds = ((prayerHours * 60 + prayerMinutes) * 60) - ((currentHours * 60 + currentMinutes) * 60 + currentSeconds);
+  // Calculate time difference in seconds (using city timezone time)
+  let diffSeconds = ((prayerHours * 60 + prayerMinutes) * 60) - ((cityHours * 60 + cityMinutes) * 60 + citySeconds);
   
   // If negative, it's tomorrow
   if (diffSeconds < 0) {
@@ -159,7 +189,7 @@ function calculateTimeRemaining(prayerTimeStr, formatAsCounter = false) {
     // Format as before (h m format)
     const hoursRemaining = Math.floor(diffSeconds / 3600);
     const minsRemaining = Math.floor((diffSeconds % 3600) / 60);
-    
+
     if (hoursRemaining > 0) {
       return `${hoursRemaining}h ${minsRemaining}m`;
     } else if (minsRemaining > 0) {
@@ -531,10 +561,16 @@ Page(
         });
         prayerWidgets.push(timeWidget);
         
-        // Time remaining widget (second line) - show for all prayer times
-        // Next prayer shows counter in hh:mm:ss format, others show regular format
-        const timeRemaining = calculateTimeRemaining(result[actualIndex].time, isNext);
-        const remainingText = isNext ? timeRemaining : timeRemaining; // No "in" prefix for counter format
+              // Time remaining widget (second line) - show for all prayer times
+              // Next prayer shows counter in hh:mm:ss format, others show regular format
+              // Convert current time to city timezone before calculating
+              const timeRemaining = calculateTimeRemaining(
+                result[actualIndex].time, 
+                isNext, 
+                data.cityTimezoneOffset, 
+                data.watchTimezoneOffset
+              );
+              const remainingText = isNext ? timeRemaining : timeRemaining; // No "in" prefix for counter format
         
         // Time remaining colors: white for center item, regular gray for others
         const remainingColor = isCenter ? 0xFFFFFF : 0x888888; // White for center, regular gray for others
