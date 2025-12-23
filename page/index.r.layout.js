@@ -17,7 +17,7 @@ import { DEVICE_WIDTH, DEVICE_HEIGHT } from "../utils/config/device";
 // Header section
 export const HEADER_TEXT = {
   x: px(0),
-  y: px(8), // Moved up from 12
+  y: px(4), // Moved up from 12
   w: DEVICE_WIDTH,
   h: px(50),
   color: CENTER_MESSAGE_COLOR,
