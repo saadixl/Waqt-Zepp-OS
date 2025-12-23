@@ -1,48 +1,31 @@
-# v3.0.0
+<img width="320" alt="IMG_1736" src="https://github.com/user-attachments/assets/32ae6d14-a2f8-4349-99ad-0e4750a015b6" />
+
+
 ## Features
-- Updated the color theme to have a striking look
-- Added more cities
-- On select button click, now a list of cities is shown.
-- Clicking on Up/Down will scroll between cities.
-- Clicking the select again selects the city.
+### Prayer times view
+- See the next prayer times 2 prayer times and previous prayer times once app is opened
+- See the selected city and qibla direction from selected city on the header
+- Clicking on Up / Down button navigates between prayer times
 
 <table>
   <tr>
     <td>
-      <img width="320" alt="IMG_1727" src="https://github.com/user-attachments/assets/47e985e9-3ac9-4dd3-8f0d-8ea7f759a8cd" />
+      <img width="320" alt="IMG_1737" src="https://github.com/user-attachments/assets/ff47ab31-b52b-4086-9fb3-bb140073c0c8" />
     </td>
     <td>
-      <img width="320" alt="IMG_1727" src="https://github.com/user-attachments/assets/47e985e9-3ac9-4dd3-8f0d-8ea7f759a8cd" />
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <img width="320" alt="IMG_1729" src="https://github.com/user-attachments/assets/1c42fe3e-f1f2-4ea5-8255-f3ae5b1515fc" />
-    </td>
-    <td>
-      <img width="320" alt="IMG_1730" src="https://github.com/user-attachments/assets/3d96da51-b14a-41fb-95a1-d93d02e55dea" />
+      <img width="320" alt="IMG_1739" src="https://github.com/user-attachments/assets/0d8e6aa6-8a23-4abe-a58c-575b995fb184" />
     </td>
   </tr>
 </table>
-  
-# v2.0.0
-## Features
-- Show prayer time for Singapore by default
-- Click on Select button to navigate between cities (Singapore, Dhaka, Makkah, London, NY available right now)
-- Showing the prayer times in a list with bigger font
-- Click on Up/Down button to scroll between prayer times
-- Added time left for each prayer times
-- Added counter for next prayer time
-- Next prayer time will be always selected and shown in the middle
 
-<img width="421" alt="ss2" src="https://github.com/user-attachments/assets/8fdd3518-10c1-45ce-aa0a-de51cd133dfd" />
+### City selection view
+- Clicking on Select button opens the city selection view
+- Currently 20 cities are supported and their qibla direction is also showed
+- Clicking Up / Down button navigates between cities
+- Clicking on Select button selects the city and fetches corresponding prayer times
 
-# v1.0.0
-## Features
-- Show prayer time for Singapore by default
-- Click on Up/Down button to navigate between cities (Singapore, Dhaka, Makkah, London, NY available right now)
-- Click on Select button to refresh the prayer times
+<img width="320" alt="IMG_1738" src="https://github.com/user-attachments/assets/058d955b-3f34-415e-88e9-227eb80ff542" />
 
-<img width="421" alt="ss" src="https://github.com/user-attachments/assets/82179601-34bc-4dbc-908a-df7b5bbc45f7" />
-
-### To run this project, please follow [official Zepp OS docs](https://docs.zepp.com/docs/guides/tools/cli/).
+## Note
+- https://api.aladhan.com/v1 API is used to fetch prayer times.
+- To run this project, please follow [official Zepp OS docs](https://docs.zepp.com/docs/guides/tools/cli/).
