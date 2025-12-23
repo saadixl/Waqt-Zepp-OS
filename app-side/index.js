@@ -1,12 +1,12 @@
 import { BaseSideService } from "@zeppos/zml/base-side";
 let currentLocationIndex = 0;
 
-// Sorted from east to west (highest to lowest UTC offset)
+// Singapore is first (default city)
 const supportedLocations = [
+  { city: 'Singapore', country: 'Singapore', timezone: 'SGT', offset: 8},
   { city: 'Sydney', country: 'Australia', timezone: 'AEST', offset: 10},
   { city: 'Tokyo', country: 'Japan', timezone: 'JST', offset: 9},
   { city: 'Kuala Lumpur', country: 'Malaysia', timezone: 'MYT', offset: 8},
-  { city: 'Singapore', country: 'Singapore', timezone: 'SGT', offset: 8},
   { city: 'Jakarta', country: 'Indonesia', timezone: 'WIB', offset: 7, latitude: -6.2088, longitude: 106.8456},
   { city: 'Dhaka', country: 'Bangladesh', timezone: 'BDT', offset: 6},
   { city: 'New Delhi', country: 'India', timezone: 'IST', offset: 5.5},
