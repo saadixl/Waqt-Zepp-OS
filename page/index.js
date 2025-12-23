@@ -431,17 +431,17 @@ Page(
           hmUI.deleteWidget(qiblaWidget);
           qiblaWidget = null;
         }
-        // Create new qibla widget
+        // Create new qibla widget - white color, same size as city name
         qiblaWidget = hmUI.createWidget(hmUI.widget.TEXT, {
           ...HEADER_TEXT,
           x: px(0),
           y: HEADER_TEXT.y + HEADER_TEXT.h - px(10), // Position below city name
           w: DEVICE_WIDTH,
           h: px(30),
-          color: DARK_ORANGE, // Orange color
+          color: 0xFFFFFF, // White color
           text: `Qibla ${qibla}°`,
-          text_size: px(18), // Smaller font size for qibla
-          text_style: hmUI.text_style.NORMAL,
+          text_size: HEADER_TEXT.text_size, // Same font size as city name
+          text_style: HEADER_TEXT.text_style, // Same text style as city name
           align_h: hmUI.align.CENTER_H,
           align_v: hmUI.align.TOP,
         });

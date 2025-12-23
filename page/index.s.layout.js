@@ -18,7 +18,7 @@ import { DEVICE_WIDTH, DEVICE_HEIGHT } from "../utils/config/device";
 // Header section
 export const HEADER_TEXT = {
   x: px(0),
-  y: px(12),
+  y: px(8), // Moved up from 12
   w: DEVICE_WIDTH,
   h: px(50),
   color: CENTER_MESSAGE_COLOR,
@@ -35,7 +35,7 @@ export const HEADER_BG = {
 };
 
 // List container - two column layout
-export const LIST_START_Y = px(70); // Moved up further
+export const LIST_START_Y = px(80); // Increased spacing from header // Moved up further
 export const LIST_ITEM_HEIGHT = px(112); // Increased height to show time remaining fully
 export const LIST_ITEM_SPACING = px(8); // Reduced spacing between items
 export const LIST_PADDING = px(40); // More padding
