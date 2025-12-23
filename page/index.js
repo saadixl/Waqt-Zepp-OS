@@ -26,6 +26,7 @@ import {
 
 const logger = Logger.getLogger("fetch_api");
 let headerWidget;
+let qiblaWidget = null; // Track qibla widget separately
 let prayerWidgets = [];
 let currentRequest = null;
 let updateTimer = null;
@@ -49,10 +50,10 @@ const supportedCities = [
   { name: 'Karachi', timezone: 'PKT' },
   { name: 'Dubai', timezone: 'GST' },
   { name: 'Tehran', timezone: 'IRST' },
+  { name: 'Doha', timezone: 'AST' },
   { name: 'Moscow', timezone: 'MSK' },
   { name: 'Makkah', timezone: 'AST' },
   { name: 'Istanbul', timezone: 'TRT' },
-  { name: 'Doha', timezone: 'AST' },
   { name: 'Paris', timezone: 'CET' },
   { name: 'London', timezone: 'GMT' },
   { name: 'Toronto', timezone: 'EST' },
@@ -60,6 +61,54 @@ const supportedCities = [
   { name: 'Austin', timezone: 'CST' },
   { name: 'San Francisco', timezone: 'PST' }
 ];
+
+// City coordinates for qibla calculation (latitude, longitude)
+const cityCoordinates = {
+  'Sydney': [-33.8688, 151.2093],
+  'Tokyo': [35.6762, 139.6503],
+  'Kuala Lumpur': [3.1390, 101.6869],
+  'Singapore': [1.3521, 103.8198],
+  'Jakarta': [-6.2088, 106.8456],
+  'Dhaka': [23.8103, 90.4125],
+  'New Delhi': [28.6139, 77.2090],
+  'Karachi': [24.8607, 67.0011],
+  'Dubai': [25.2048, 55.2708],
+  'Tehran': [35.6892, 51.3890],
+  'Doha': [25.2854, 51.5310],
+  'Moscow': [55.7558, 37.6173],
+  'Makkah': [21.4225, 39.8262],
+  'Istanbul': [41.0082, 28.9784],
+  'Paris': [48.8566, 2.3522],
+  'London': [51.5074, -0.1278],
+  'Toronto': [43.6532, -79.3832],
+  'New York': [40.7128, -74.0060],
+  'Austin': [30.2672, -97.7431],
+  'San Francisco': [37.7749, -122.4194]
+};
+
+// Mecca coordinates (Kaaba)
+const MECCA_LAT = 21.4225;
+const MECCA_LON = 39.8262;
+
+// Calculate qibla direction (bearing) from a city to Mecca
+function calculateQibla(lat, lon) {
+  // Convert degrees to radians
+  const lat1 = lat * Math.PI / 180;
+  const lon1 = lon * Math.PI / 180;
+  const lat2 = MECCA_LAT * Math.PI / 180;
+  const lon2 = MECCA_LON * Math.PI / 180;
+  
+  // Calculate bearing using the formula
+  const dLon = lon2 - lon1;
+  const y = Math.sin(dLon) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+  
+  let bearing = Math.atan2(y, x);
+  bearing = bearing * 180 / Math.PI;
+  bearing = (bearing + 360) % 360; // Normalize to 0-360
+  
+  return Math.round(bearing);
+}
 
 function formatDate(date) {
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -127,6 +176,10 @@ function deleteAllWidgets() {
   if (headerWidget) {
     hmUI.deleteWidget(headerWidget);
     headerWidget = null;
+  }
+  if (qiblaWidget) {
+    hmUI.deleteWidget(qiblaWidget);
+    qiblaWidget = null;
   }
   prayerWidgets.forEach(widget => {
     if (widget) hmUI.deleteWidget(widget);
@@ -220,6 +273,33 @@ Page(
         align_v: hmUI.align.CENTER_V,
       });
       
+      // Calculate and render qibla direction for the center (selected) city
+      const centerCityIndex = (citySelectionOffset + supportedCities.length) % supportedCities.length;
+      const centerCity = supportedCities[centerCityIndex];
+      const coords = cityCoordinates[centerCity.name];
+      if (coords) {
+        const qibla = calculateQibla(coords[0], coords[1]);
+        // Delete existing qibla widget if it exists
+        if (qiblaWidget) {
+          hmUI.deleteWidget(qiblaWidget);
+          qiblaWidget = null;
+        }
+        // Create qibla widget for city selection page
+        qiblaWidget = hmUI.createWidget(hmUI.widget.TEXT, {
+          ...HEADER_TEXT,
+          x: px(0),
+          y: HEADER_TEXT.y + HEADER_TEXT.h - px(10), // Position below "Select City"
+          w: DEVICE_WIDTH,
+          h: px(30),
+          color: DARK_ORANGE, // Orange color
+          text: `Qibla ${qibla}°`,
+          text_size: px(18), // Smaller font size for qibla
+          text_style: hmUI.text_style.NORMAL,
+          align_h: hmUI.align.CENTER_H,
+          align_v: hmUI.align.TOP,
+        });
+      }
+      
       // Render city list
       prayerWidgets = [];
       const padding = LIST_PADDING - px(10);
@@ -290,7 +370,7 @@ Page(
       }
     },
     showLoading() {
-      deleteAllWidgets();
+      deleteAllWidgets(); // This already deletes qibla widget
       headerWidget = hmUI.createWidget(hmUI.widget.TEXT, {
         x: px(0),
         y: DEVICE_HEIGHT / 2 - px(20), // Center vertically
@@ -337,14 +417,40 @@ Page(
       // Normalize rotation offset to be within valid range (circular)
       rotationOffset = ((rotationOffset % totalItems) + totalItems) % totalItems;
       
-      // Render header with city name centered (no background, no icon, no date)
+      // Render header with city name
       headerWidget = hmUI.createWidget(hmUI.widget.TEXT, {
         ...HEADER_TEXT,
         color: DARK_ORANGE, // Orange color for location (hex: D44C02)
         text: city,
+        text_style: hmUI.text_style.BOLD, // Bold text
         align_h: hmUI.align.CENTER_H,
         align_v: hmUI.align.CENTER_V,
       });
+      
+      // Calculate and render qibla direction below city name
+      const coords = cityCoordinates[city];
+      if (coords) {
+        const qibla = calculateQibla(coords[0], coords[1]);
+        // Delete existing qibla widget if it exists (to prevent duplicates)
+        if (qiblaWidget) {
+          hmUI.deleteWidget(qiblaWidget);
+          qiblaWidget = null;
+        }
+        // Create new qibla widget
+        qiblaWidget = hmUI.createWidget(hmUI.widget.TEXT, {
+          ...HEADER_TEXT,
+          x: px(0),
+          y: HEADER_TEXT.y + HEADER_TEXT.h - px(10), // Position below city name
+          w: DEVICE_WIDTH,
+          h: px(30),
+          color: DARK_ORANGE, // Orange color
+          text: `Qibla ${qibla}°`,
+          text_size: px(18), // Smaller font size for qibla
+          text_style: hmUI.text_style.NORMAL,
+          align_h: hmUI.align.CENTER_H,
+          align_v: hmUI.align.TOP,
+        });
+      }
       
       // Render visible items based on rotation
       prayerWidgets = [];
