@@ -273,33 +273,6 @@ Page(
         align_v: hmUI.align.CENTER_V,
       });
       
-      // Calculate and render qibla direction for the center (selected) city
-      const centerCityIndex = (citySelectionOffset + supportedCities.length) % supportedCities.length;
-      const centerCity = supportedCities[centerCityIndex];
-      const coords = cityCoordinates[centerCity.name];
-      if (coords) {
-        const qibla = calculateQibla(coords[0], coords[1]);
-        // Delete existing qibla widget if it exists
-        if (qiblaWidget) {
-          hmUI.deleteWidget(qiblaWidget);
-          qiblaWidget = null;
-        }
-        // Create qibla widget for city selection page
-        qiblaWidget = hmUI.createWidget(hmUI.widget.TEXT, {
-          ...HEADER_TEXT,
-          x: px(0),
-          y: HEADER_TEXT.y + HEADER_TEXT.h - px(10), // Position below "Select City"
-          w: DEVICE_WIDTH,
-          h: px(30),
-          color: DARK_ORANGE, // Orange color
-          text: `Qibla ${qibla}°`,
-          text_size: px(18), // Smaller font size for qibla
-          text_style: hmUI.text_style.NORMAL,
-          align_h: hmUI.align.CENTER_H,
-          align_v: hmUI.align.TOP,
-        });
-      }
-      
       // Render city list
       prayerWidgets = [];
       const padding = LIST_PADDING - px(10);
@@ -323,14 +296,14 @@ Page(
             ...ACTIVE_PRAYER_NAME_TEXT,
             color: 0x000000, // Black font color for selected city
             text_style: hmUI.text_style.BOLD,
-            align_h: hmUI.align.CENTER_H,
+            align_h: hmUI.align.LEFT,
             align_v: hmUI.align.CENTER_V,
           };
         } else {
           bgStyle = { color: 0x00000000 }; // Transparent
           textStyle = {
             ...PRAYER_NAME_TEXT,
-            align_h: hmUI.align.CENTER_H,
+            align_h: hmUI.align.LEFT,
             align_v: hmUI.align.CENTER_V,
           };
         }
@@ -345,17 +318,39 @@ Page(
         });
         prayerWidgets.push(bgWidget);
         
-        // City name widget - center aligned
+        // City name widget - left aligned, vertically centered
         const cityData = supportedCities[actualIndex];
+        // Calculate width to prevent clipping - leave space for qibla on the right
+        const qiblaWidth = px(80); // Space for qibla degree value
+        const cityNameWidth = DEVICE_WIDTH - (padding * 2) - (itemPadding * 2) - qiblaWidth - px(10); // Leave gap between city and qibla
         const cityWidget = hmUI.createWidget(hmUI.widget.TEXT, {
           ...textStyle,
-          x: 0,
+          x: padding + itemPadding,
           y: y,
-          w: DEVICE_WIDTH,
+          w: cityNameWidth,
           h: LIST_ITEM_HEIGHT,
           text: cityData.name,
+          align_v: hmUI.align.CENTER_V, // Vertically center aligned
         });
         prayerWidgets.push(cityWidget);
+        
+        // Show qibla degree value on the right side, right-aligned, white color, vertically centered
+        const coords = cityCoordinates[cityData.name];
+        if (coords) {
+          const qibla = calculateQibla(coords[0], coords[1]);
+          const qiblaWidget = hmUI.createWidget(hmUI.widget.TEXT, {
+            ...textStyle,
+            x: DEVICE_WIDTH - padding - itemPadding - qiblaWidth,
+            y: y,
+            w: qiblaWidth,
+            h: LIST_ITEM_HEIGHT,
+            text: `${qibla}°`,
+            color: 0xFFFFFF, // White color
+            align_h: hmUI.align.RIGHT,
+            align_v: hmUI.align.CENTER_V, // Vertically center aligned
+          });
+          prayerWidgets.push(qiblaWidget);
+        }
       }
     },
     changeLocation() {
